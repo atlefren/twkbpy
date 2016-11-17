@@ -59,8 +59,19 @@ def create_multipoint(geoms, ids, ndims):
     return create_features_from_multi(constants.POINT, geoms, ids, ndims)
 
 
+def create_features_from_collection(geoms, ids, ndims):
+    return [create_feature(o[0]['type'], o[0]['coordinates'], o[1], ndims)
+            for o in itertools.izip(geoms, ids)]
+
+
+def create_collection(geoms, ids, ndims):
+    return create_features_from_collection(geoms, ids, ndims)
+
+
 transforms = {}
 transforms[constants.POINT] = create_point
 transforms[constants.LINESTRING] = create_linestring
 transforms[constants.POLYGON] = create_polygon
 transforms[constants.MULTIPOINT] = create_multipoint
+
+transforms[constants.COLLECTION] = create_collection

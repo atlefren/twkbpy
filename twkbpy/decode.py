@@ -27,11 +27,13 @@ class Decoder:
                 res = read_buffer(ta_struct)
             except StopIteration:
                 break
-            transformer = transforms[ta_struct['type']]
+
             ndims = ta_struct['ndims']
             if 'geoms' in res:
+                transformer = transforms[res['type']]
                 features += transformer(res['geoms'], res['ids'], ndims)
             else:
+                transformer = transforms[ta_struct['type']]
                 features.append({
                     'type': 'Feature',
                     'geometry': transformer(res, ndims)

@@ -78,3 +78,27 @@ class DecodeTest(unittest.TestCase):
                 }
             ]
         })
+
+    def test_decode_collection(self):
+        g = decode(hex_to_stream('070402000201000002020002080a0404'))
+        self.assertEqual(g, {
+            'type': 'FeatureCollection',
+            'features': [
+                {
+                    'type': 'Feature',
+                    'id': 0,
+                    'geometry': {
+                        'type': 'Point',
+                        'coordinates': [0, 1]
+                    }
+                },
+                {
+                    'type': 'Feature',
+                    'id': 1,
+                    'geometry': {
+                        'type': 'LineString',
+                        'coordinates': [[4, 5], [6, 7]]
+                    }
+                }
+            ]
+        })

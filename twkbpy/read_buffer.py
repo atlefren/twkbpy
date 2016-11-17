@@ -77,6 +77,32 @@ def parse_multi(ta_struct, parser):
     }
 
 
+def parse_collection(ta_struct):
+    geom_type = ta_struct['type']
+    ngeoms = read_varint64(ta_struct)
+    geoms = []
+    id_list = []
+    if ta_struct['has_idlist']:
+        id_list = read_id_list(ta_struct, ngeoms)
+
+    #print 'ngeoms', ngeoms
+    #print geom_type
+    for i in range(0, ngeoms):
+        geo = read_buffer(ta_struct)
+        #print geo, ta_struct['type']
+        geoms.append({
+            'type': ta_struct['type'],
+            'coordinates': geo
+        })
+
+    return {
+        'type': geom_type,
+        'ids': id_list,
+        'ndims': ta_struct['ndims'],
+        'geoms': geoms
+    }
+
+
 def read_objects(ta_struct):
     type = ta_struct['type']
     for i in range(0, ta_struct['ndims'] + 1):
@@ -93,6 +119,9 @@ def read_objects(ta_struct):
 
     if type == constants.MULTIPOINT:
         return parse_multi(ta_struct, parse_point)
+
+    if type == constants.COLLECTION:
+        return parse_collection(ta_struct)
 
     raise TypeError('Unknown type: %s' % type)
 

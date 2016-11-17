@@ -120,3 +120,74 @@ class DecodeTest(unittest.TestCase):
                 }
             ]
         })
+
+    def test_decode_multipoint_no_ids(self):
+        # SELECT encode(ST_AsTWKB('MULTIPOINT((1 2), (3 4))'::geometry, 0, 0, 0, true, true), 'hex')
+        g = decode(hex_to_stream('040309020404040202040404'))
+        self.assertEqual(g, {
+            'type': 'FeatureCollection',
+            'features': [
+                {
+                    'type': 'Feature',
+                    'geometry': {
+                        'type': 'Point',
+                        'coordinates': [1.0, 2.0]
+                    }
+                },
+                {
+                    'type': 'Feature',
+                    'geometry': {
+                        'type': 'Point',
+                        'coordinates': [3.0, 4.0]
+                    }
+                }
+            ]
+        })
+    
+    def test_decode_multilinestring_no_ids(self):
+        # SELECT encode(ST_AsTWKB('MULTILINESTRING((1 2, 3 4), (5 6, 7 8))'::geometry, 0, 0, 0, true, true), 'hex')
+        g = decode(hex_to_stream('05030f020c040c0202020404040204040404'))
+
+        self.assertEqual(g, {
+            'type': 'FeatureCollection',
+            'features': [
+                {
+                    'type': 'Feature',
+                    'geometry': {
+                        'type': 'LineString',
+                        'coordinates': [[1.0, 2.0], [3.0, 4.0]]
+                    }
+                },
+                {
+                    'type': 'Feature',
+                    'geometry': {
+                        'type': 'LineString',
+                        'coordinates': [[5.0, 6.0], [7.0, 8.0]]
+                    }
+                }
+            ]
+        })
+
+    def test_decode_multipolygon_no_ids(self):
+        # SELECT encode(ST_AsTWKB('MULTIPOLYGON(((0 0, 1 0, 1 1, 0 1, 0 0)), ((10 10, 11 10, 11 11, 10 11, 10 10)))'::geometry, 0, 0, 0, true, true), 'hex')
+        g = decode(hex_to_stream('06031d0016001602010500000200000201000001010514140200000201000001'))
+
+        self.assertEqual(g, {
+            'type': 'FeatureCollection',
+            'features': [
+                {
+                    'type': 'Feature',
+                    'geometry': {
+                        'type': 'Polygon',
+                        'coordinates': [[[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0], [0.0, 0.0]]]
+                    }
+                },
+                {
+                    'type': 'Feature',
+                    'geometry': {
+                        'type': 'Polygon',
+                        'coordinates': [[[10.0, 10.0], [11.0, 10.0], [11.0, 11.0], [10.0, 11.0], [10.0, 10.0]]]
+                    }
+                }
+            ]
+        })

@@ -69,7 +69,6 @@ def parse_multi(ta_struct, parser):
     for i in range(0, ngeoms):
         geo = parser(ta_struct)
         geoms.append(geo)
-
     return {
         'type': type,
         'ids': id_list,
@@ -85,11 +84,8 @@ def parse_collection(ta_struct):
     if ta_struct['has_idlist']:
         id_list = read_id_list(ta_struct, ngeoms)
 
-    #print 'ngeoms', ngeoms
-    #print geom_type
     for i in range(0, ngeoms):
         geo = read_buffer(ta_struct)
-        #print geo, ta_struct['type']
         geoms.append({
             'type': ta_struct['type'],
             'coordinates': geo
@@ -119,6 +115,12 @@ def read_objects(ta_struct):
 
     if type == constants.MULTIPOINT:
         return parse_multi(ta_struct, parse_point)
+
+    if type == constants.MULTILINESTRING:
+        return parse_multi(ta_struct, parse_line)
+
+    if type == constants.MULTIPOLYGON:
+        return parse_multi(ta_struct, parse_polygon)
 
     if type == constants.COLLECTION:
         return parse_collection(ta_struct)

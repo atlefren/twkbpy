@@ -43,25 +43,35 @@ def create_polygon(coordinates, ndims):
 
 
 def create_feature(type, coordinates, id, ndims):
-    return {
+    feature = {
         'type': 'Feature',
-        'id': id,
         'geometry': transforms[type](coordinates, ndims)
     }
+    if id is not None:
+        feature['id'] = id
+    return feature
 
 
 def create_features_from_multi(type, geoms, ids, ndims):
     return [create_feature(type, o[0], o[1], ndims)
-            for o in itertools.izip(geoms, ids)]
+            for o in itertools.izip_longest(geoms, ids)]
 
 
 def create_multipoint(geoms, ids, ndims):
     return create_features_from_multi(constants.POINT, geoms, ids, ndims)
 
 
+def create_multilinestring(geoms, ids, ndims):
+    return create_features_from_multi(constants.LINESTRING, geoms, ids, ndims)
+
+
+def create_multipolygon(geoms, ids, ndims):
+    return create_features_from_multi(constants.POLYGON, geoms, ids, ndims)
+
+
 def create_features_from_collection(geoms, ids, ndims):
     return [create_feature(o[0]['type'], o[0]['coordinates'], o[1], ndims)
-            for o in itertools.izip(geoms, ids)]
+            for o in itertools.izip_longest(geoms, ids)]
 
 
 def create_collection(geoms, ids, ndims):
@@ -73,5 +83,6 @@ transforms[constants.POINT] = create_point
 transforms[constants.LINESTRING] = create_linestring
 transforms[constants.POLYGON] = create_polygon
 transforms[constants.MULTIPOINT] = create_multipoint
-
+transforms[constants.MULTILINESTRING] = create_multilinestring
+transforms[constants.MULTIPOLYGON] = create_multipolygon
 transforms[constants.COLLECTION] = create_collection

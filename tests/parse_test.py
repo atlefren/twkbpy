@@ -102,3 +102,21 @@ class DecodeTest(unittest.TestCase):
                 }
             ]
         })
+
+    def test_decoce_polygon_with_holes(self):
+        g = decode(hex_to_stream('03031b000400040205000004000004030000030500000002020000010100'))
+        self.assertEqual(g, {
+            'type': 'FeatureCollection',
+            'features': [
+                {
+                    'type': 'Feature',
+                    'geometry': {
+                        'type': 'Polygon',
+                        'coordinates': [
+                            [[0, 0], [2, 0], [2, 2], [0, 2], [0, 0]],
+                            [[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]]
+                        ]
+                    }
+                }
+            ]
+        })

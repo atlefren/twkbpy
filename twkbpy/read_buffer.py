@@ -34,6 +34,13 @@ def read_pa(ta_struct, npoints):
     return coords
 
 
+def read_id_list(ta_struct, n):
+    id_list = []
+    for i in range(0, n):
+        id_list.append(read_varsint64(ta_struct))
+    return id_list
+
+
 def parse_point(ta_struct):
     return read_pa(ta_struct, 1)
 
@@ -51,6 +58,25 @@ def parse_polygon(ta_struct):
     return coordinates
 
 
+def parse_multi(ta_struct, parser):
+    type = ta_struct['type']
+    ngeoms = read_varint64(ta_struct)
+    geoms = []
+    id_list = []
+    if ta_struct['has_idlist']:
+        id_list = read_id_list(ta_struct, ngeoms)
+
+    for i in range(0, ngeoms):
+        geo = parser(ta_struct)
+        geoms.append(geo)
+
+    return {
+        'type': type,
+        'ids': id_list,
+        'geoms': geoms
+    }
+
+
 def read_objects(ta_struct):
     type = ta_struct['type']
     for i in range(0, ta_struct['ndims'] + 1):
@@ -64,6 +90,9 @@ def read_objects(ta_struct):
 
     if type == constants.POLYGON:
         return parse_polygon(ta_struct)
+
+    if type == constants.MULTIPOINT:
+        return parse_multi(ta_struct, parse_point)
 
     raise TypeError('Unknown type: %s' % type)
 

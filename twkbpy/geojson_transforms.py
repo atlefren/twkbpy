@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import itertools
+
 import constants
 
 
@@ -39,7 +41,26 @@ def create_polygon(coordinates, ndims):
     coords = [to_coords(c, ndims) for c in coordinates]
     return create_geometry(constants.POLYGON, coords)
 
+
+def create_feature(type, coordinates, id, ndims):
+    return {
+        'type': 'Feature',
+        'id': id,
+        'geometry': transforms[type](coordinates, ndims)
+    }
+
+
+def create_features_from_multi(type, geoms, ids, ndims):
+    return [create_feature(type, o[0], o[1], ndims)
+            for o in itertools.izip(geoms, ids)]
+
+
+def create_multipoint(geoms, ids, ndims):
+    return create_features_from_multi(constants.POINT, geoms, ids, ndims)
+
+
 transforms = {}
 transforms[constants.POINT] = create_point
 transforms[constants.LINESTRING] = create_linestring
 transforms[constants.POLYGON] = create_polygon
+transforms[constants.MULTIPOINT] = create_multipoint

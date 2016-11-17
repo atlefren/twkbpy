@@ -30,7 +30,6 @@ class Decoder:
             transformer = transforms[ta_struct['type']]
             ndims = ta_struct['ndims']
             if 'geoms' in res:
-                pass
                 features += transformer(res['geoms'], res['ids'], ndims)
             else:
                 features.append({

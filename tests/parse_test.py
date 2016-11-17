@@ -54,3 +54,27 @@ class DecodeTest(unittest.TestCase):
                 }
             ]
         })
+
+    def test_decode_multigeom_with_ids(self):
+        g = decode(hex_to_stream('04070b0004020402000200020404'))
+        self.assertEqual(g, {
+            'type': 'FeatureCollection',
+            'features': [
+                {
+                    'type': 'Feature',
+                    'id': 0,
+                    'geometry': {
+                        'type': 'Point',
+                        'coordinates': [0, 1]
+                    }
+                },
+                {
+                    'type': 'Feature',
+                    'id': 1,
+                    'geometry': {
+                        'type': 'Point',
+                        'coordinates': [2, 3]
+                    }
+                }
+            ]
+        })

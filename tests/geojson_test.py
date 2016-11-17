@@ -8,7 +8,7 @@ from twkbpy import to_geojson
 from util import hex_to_bytes, hex_to_stream
 
 
-class DecodeTest(unittest.TestCase):
+class GeoJsonTest(unittest.TestCase):
 
     def test_decode_point(self):
         g = to_geojson(hex_to_stream('01000204'))

@@ -4,14 +4,14 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import unittest
-from twkbpy import decode
+from twkbpy import to_geojson
 from util import hex_to_bytes, hex_to_stream
 
 
 class DecodeTest(unittest.TestCase):
 
     def test_decode_point(self):
-        g = decode(hex_to_stream('01000204'))
+        g = to_geojson(hex_to_stream('01000204'))
         self.assertEqual(g, {
             'type': 'FeatureCollection',
             'features': [
@@ -26,7 +26,7 @@ class DecodeTest(unittest.TestCase):
         })
 
     def test_decode_linestring(self):
-        g = decode(hex_to_stream('02000202020808'))
+        g = to_geojson(hex_to_stream('02000202020808'))
         self.assertEqual(g, {
             'type': 'FeatureCollection',
             'features': [
@@ -41,7 +41,7 @@ class DecodeTest(unittest.TestCase):
         })
 
     def test_decode_polygon(self):
-        g = decode(hex_to_stream('03031b000400040205000004000004030000030500000002020000010100'))
+        g = to_geojson(hex_to_stream('03031b000400040205000004000004030000030500000002020000010100'))
         self.assertEqual(g, {
             'type': 'FeatureCollection',
             'features': [
@@ -56,7 +56,7 @@ class DecodeTest(unittest.TestCase):
         })
 
     def test_decode_multigeom_with_ids(self):
-        g = decode(hex_to_stream('04070b0004020402000200020404'))
+        g = to_geojson(hex_to_stream('04070b0004020402000200020404'))
         self.assertEqual(g, {
             'type': 'FeatureCollection',
             'features': [
@@ -80,7 +80,7 @@ class DecodeTest(unittest.TestCase):
         })
 
     def test_decode_collection(self):
-        g = decode(hex_to_stream('070402000201000002020002080a0404'))
+        g = to_geojson(hex_to_stream('070402000201000002020002080a0404'))
         self.assertEqual(g, {
             'type': 'FeatureCollection',
             'features': [
@@ -104,7 +104,7 @@ class DecodeTest(unittest.TestCase):
         })
 
     def test_decoce_polygon_with_holes(self):
-        g = decode(hex_to_stream('03031b000400040205000004000004030000030500000002020000010100'))
+        g = to_geojson(hex_to_stream('03031b000400040205000004000004030000030500000002020000010100'))
         self.assertEqual(g, {
             'type': 'FeatureCollection',
             'features': [
@@ -123,7 +123,7 @@ class DecodeTest(unittest.TestCase):
 
     def test_decode_multipoint_no_ids(self):
         # SELECT encode(ST_AsTWKB('MULTIPOINT((1 2), (3 4))'::geometry, 0, 0, 0, true, true), 'hex')
-        g = decode(hex_to_stream('040309020404040202040404'))
+        g = to_geojson(hex_to_stream('040309020404040202040404'))
         self.assertEqual(g, {
             'type': 'FeatureCollection',
             'features': [
@@ -146,7 +146,7 @@ class DecodeTest(unittest.TestCase):
     
     def test_decode_multilinestring_no_ids(self):
         # SELECT encode(ST_AsTWKB('MULTILINESTRING((1 2, 3 4), (5 6, 7 8))'::geometry, 0, 0, 0, true, true), 'hex')
-        g = decode(hex_to_stream('05030f020c040c0202020404040204040404'))
+        g = to_geojson(hex_to_stream('05030f020c040c0202020404040204040404'))
 
         self.assertEqual(g, {
             'type': 'FeatureCollection',
@@ -170,7 +170,7 @@ class DecodeTest(unittest.TestCase):
 
     def test_decode_multipolygon_no_ids(self):
         # SELECT encode(ST_AsTWKB('MULTIPOLYGON(((0 0, 1 0, 1 1, 0 1, 0 0)), ((10 10, 11 10, 11 11, 10 11, 10 10)))'::geometry, 0, 0, 0, true, true), 'hex')
-        g = decode(hex_to_stream('06031d0016001602010500000200000201000001010514140200000201000001'))
+        g = to_geojson(hex_to_stream('06031d0016001602010500000200000201000001010514140200000201000001'))
 
         self.assertEqual(g, {
             'type': 'FeatureCollection',

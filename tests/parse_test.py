@@ -5,13 +5,13 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 import unittest
 from twkbpy import decode
-from util import hex_to_bytes
+from util import hex_to_bytes, hex_to_stream
 
 
 class DecodeTest(unittest.TestCase):
 
     def test_decode_point(self):
-        g = decode(hex_to_bytes('01000204'))
+        g = decode(hex_to_stream('01000204'))
         self.assertEqual(g, {
             'type': 'FeatureCollection',
             'features': [
@@ -26,7 +26,7 @@ class DecodeTest(unittest.TestCase):
         })
 
     def test_decode_linestring(self):
-        g = decode(hex_to_bytes('02000202020808'))
+        g = decode(hex_to_stream('02000202020808'))
         self.assertEqual(g, {
             'type': 'FeatureCollection',
             'features': [
@@ -41,7 +41,7 @@ class DecodeTest(unittest.TestCase):
         })
 
     def test_decode_polygon(self):
-        g = decode(hex_to_bytes('03031b000400040205000004000004030000030500000002020000010100'))
+        g = decode(hex_to_stream('03031b000400040205000004000004030000030500000002020000010100'))
         self.assertEqual(g, {
             'type': 'FeatureCollection',
             'features': [

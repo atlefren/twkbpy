@@ -72,9 +72,7 @@ def read_buffer(ta_struct):
     has_z = 0
     has_m = 0
 
-    # geometry type and precision header
-    flag = ta_struct['buffer'][ta_struct['cursor']]
-    ta_struct['cursor'] += 1
+    flag = next(ta_struct['stream'])
 
     precision_xy = unzigzag((flag & 0xF0) >> 4)
     ta_struct['type'] = flag & 0x0F
@@ -84,8 +82,7 @@ def read_buffer(ta_struct):
     ta_struct['factors'][1] = precision_xy
 
     # Metadata header
-    flag = ta_struct['buffer'][ta_struct['cursor']]
-    ta_struct['cursor'] += 1
+    flag = next(ta_struct['stream'])
 
     ta_struct['has_bbox'] = flag & 0x01
     ta_struct['has_size'] = (flag & 0x02) >> 1
@@ -96,8 +93,7 @@ def read_buffer(ta_struct):
 
     # the geometry has Z and/or M coordinates
     if extended_dims:
-        extended_dims_flag = ta_struct['buffer'][ta_struct.cursor]
-        ta_struct.cursor += 1
+        extended_dims_flag = next(ta_struct['stream'])
 
         # Strip Z/M presence and precision from ext byte
         has_z = (extended_dims_flag & 0x01)

@@ -4,20 +4,29 @@ from geojson_transforms import transforms
 from read_buffer import read_buffer
 
 
+def byte_gen(stream):
+    while True:
+        a = stream.read(1)
+        if a == '':
+            raise StopIteration
+        yield bytearray(a)[0]
+
+
 class Decoder:
 
-    def decode(self, buffer):
+    def decode(self, stream):
 
         ta_struct = {
-            'buffer': buffer,
-            'cursor': 0,
-            'buffer_length': len(buffer),
+            'stream': byte_gen(stream),
             'refpoint': [None] * 4
           }
 
         features = []
-        while ta_struct['cursor'] < ta_struct['buffer_length']:
-            res = read_buffer(ta_struct)
+        while True:
+            try:
+                res = read_buffer(ta_struct)
+            except StopIteration:
+                break
             transformer = transforms[ta_struct['type']]
             ndims = ta_struct['ndims']
             if 'geoms' in res:

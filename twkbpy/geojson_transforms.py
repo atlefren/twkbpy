@@ -53,8 +53,8 @@ def create_feature(type, coordinates, id, ndims):
 
 
 def create_features_from_multi(type, geoms, ids, ndims):
-    return [create_feature(type, o[0], o[1], ndims)
-            for o in itertools.izip_longest(geoms, ids)]
+    for o in itertools.izip_longest(geoms, ids):
+        yield create_feature(type, o[0], o[1], ndims)
 
 
 def create_multipoint(geoms, ids, ndims):
@@ -70,8 +70,8 @@ def create_multipolygon(geoms, ids, ndims):
 
 
 def create_features_from_collection(geoms, ids, ndims):
-    return [create_feature(o[0]['type'], o[0]['coordinates'], o[1], ndims)
-            for o in itertools.izip_longest(geoms, ids)]
+    for o in itertools.izip_longest(geoms, ids):
+        yield create_feature(o[0]['type'], o[0]['coordinates'], o[1], ndims)
 
 
 def create_collection(geoms, ids, ndims):
